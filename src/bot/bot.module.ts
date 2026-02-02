@@ -8,6 +8,7 @@ import { BotRepository } from "./bot.repository";
 @Module({
 	imports: [
 		PrismaModule,
+		//register TelegrafModule with bot token from environment variables
 		TelegrafModule.forRoot({
 			token: process.env.BOT_TOKEN || "",
 		}),

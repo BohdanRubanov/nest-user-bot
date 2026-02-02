@@ -7,6 +7,7 @@
 generator client {
   provider = "prisma-client"
   output   = "../generated/prisma"
+  //added to generate commonjs module format
   moduleFormat = "cjs"
 }
 
@@ -26,7 +27,7 @@ model TgUser {
 
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
-
+  // one-to-many relation with TgEvent
   events       TgEvent[]
 }
 
@@ -39,26 +40,28 @@ model TgChat {
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-
+  // one-to-many relation with TgEvent
   events      TgEvent[]
 }
 
 model TgEvent {
-  id        Int   @id @default(autoincrement())   
-  updateId  BigInt?
+  id        Int   @id @default(autoincrement())  
+  // is unique to prevent duplicate events
+  updateId  BigInt? @unique
   eventType String
   messageId BigInt?
+  // Unix timestamp of the message
   dateUnix  Int?
   messageText String?
   userId    Int?
   chatId    Int?
   user      TgUser?  @relation(fields: [userId], references: [id])
   chat      TgChat?  @relation(fields: [chatId], references: [id])
-
+  // Raw JSON payload of the event
   raw       Json  
 
   createdAt DateTime @default(now())
-
+  // Add index on eventType and createdAt for faster querying by type and date
   @@index([eventType, createdAt])
   @@index([updateId])
 }

@@ -1,14 +1,13 @@
-services:                         # Section with all services (containers) started by docker-compose
+services:                      
 
-  postgres:                       # Service name (hostname inside the Docker network)
+  postgres:                       
     image: postgres:15-alpine     # PostgreSQL Docker image version 15 based on Alpine Linux (lightweight and fast)
 
-    container_name: bot_db # Explicit container name (convenient for docker ps / docker exec)
-
+    container_name: bot_db 
     environment:                  # Environment variables read by PostgreSQL during initialization
-      POSTGRES_DB: ${DB_NAME}     # Name of the database created on first startup
-      POSTGRES_USER: ${DB_USER}   # PostgreSQL user
-      POSTGRES_PASSWORD: ${DB_PASSWORD} # PostgreSQL user password
+      POSTGRES_DB: ${DB_NAME}     
+      POSTGRES_USER: ${DB_USER}   
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
 
     healthcheck:                  # Container health check (healthy / unhealthy)
       test:                       # Command executed to perform the check
@@ -21,14 +20,18 @@ services:                         # Section with all services (containers) start
       timeout: 5s                 # Maximum time to wait for a response
       retries: 5                  # Number of consecutive failed checks allowed
 
-    ports:                        # Port mapping container → host
+    ports:                        
       - "5432:5432"               # localhost:5432 → container:5432 (default PostgreSQL port)
 
-    volumes:                      # Volumes and file mounts
+    volumes:                     
       - postgres_data:/var/lib/postgresql/data
       # Named volume (persistent storage) for PostgreSQL data
-      # Data is preserved between container restarts
-
-
-volumes:                          # Docker volume declarations
-  postgres_data:                  # Named volume for PostgreSQL data
+     
+  
+  redis: #redis service for rate limiting
+    image: redis:7-alpine    # Redis Docker image version 7 based on Alpine Linux
+    container_name: bot_redis
+    ports:
+      - "6379:6379"
+volumes:                          
+  postgres_data:                 
